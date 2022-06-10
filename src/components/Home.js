@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
+import { GetMovies } from '../actions';
 import axios from 'axios';
+
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -9,23 +12,16 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import './Home.css'
 
-const Home = () => {
 
-  const [movies, setMovies] = useState({ data: [] })
+const Home = () => {
+  const dispatch = useDispatch();                                                 //declaro la const dispatch para despachar mis acciones, con el hook useDispatch
+  const allMovies = useSelector ((state) => state.movies);                            // este hook es lo mismo que usar el mapStateToProps. Con useSelector traeme en esa constante todo lo que esta en el estado de dogs me trae desde el reducer el estado dogs donde están todos los perros 
+
+console.log(allMovies)
 
   useEffect(() => {
-    const endpoints = [
-      'https://api.themoviedb.org/3/movie/top_rated?api_key=d023cfe53943d6e26b3d31eb89dad6e6&language=en-US&page=1',
-      'https://api.themoviedb.org/3/movie/top_rated?api_key=d023cfe53943d6e26b3d31eb89dad6e6&language=en-US&page=2',
-      'https://api.themoviedb.org/3/movie/top_rated?api_key=d023cfe53943d6e26b3d31eb89dad6e6&language=en-US&page=3',
-      'https://api.themoviedb.org/3/movie/top_rated?api_key=d023cfe53943d6e26b3d31eb89dad6e6&language=en-US&page=4',
-      'https://api.themoviedb.org/3/movie/top_rated?api_key=d023cfe53943d6e26b3d31eb89dad6e6&language=en-US&page=5',
-    ]
-    axios.all(endpoints.map((endpoint) => axios.get(endpoint))).then(
-      axios.spread((res, res1, res2, res3, res4) => {
-setMovies({ data: [res.data.results.concat(res1.data.results).concat(res2.data.results).concat(res3.data.results).concat(res4.data.results)]})
-      }))
-  }, [setMovies])
+    dispatch(GetMovies())  
+  }, [dispatch])
 
   return (
     <>
@@ -42,7 +38,7 @@ setMovies({ data: [res.data.results.concat(res1.data.results).concat(res2.data.r
           </TableRow>
         </TableHead>
           <TableBody>
-          {movies.data.map((el, id) => (
+          {allMovies.map((el, id) => (
             <>
               {el.map(el => 
                <TableRow >
