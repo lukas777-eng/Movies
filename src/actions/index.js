@@ -18,7 +18,11 @@ export function GetMovies(){
                     axios.spread((res, res1, res2, res3, res4) => {
                          dispatch(   {
                                     type: 'GET_MOVIES', 
-                                    payload:  [res.data.results.concat(res1.data.results).concat(res2.data.results).concat(res3.data.results).concat(res4.data.results)]})
+                                    payload:  {
+                                        a: [res.data.results.concat(res1.data.results).concat(res2.data.results).concat(res3.data.results).concat(res4.data.results)],
+                                        b: [res.data.results.concat(res1.data.results).concat(res2.data.results).concat(res3.data.results).concat(res4.data.results)]
+                                    }
+                                })
                    }))
 
     }
