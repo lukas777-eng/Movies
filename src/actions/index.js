@@ -23,3 +23,10 @@ export function GetMovies(){
 
     }
 }
+
+export function FilterByLanguage(payload) {
+    return {
+        type: 'FILTER_LANGUAGE',
+        payload,
+    }
+}

@@ -1,9 +1,26 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
+import { useDispatch, useSelector } from 'react-redux';
+import { GetMovies, FilterByLanguage } from '../actions';
 
 const Test = () => {
 
-  const [moviesList, setMoviesList] = useState([])
+    const dispatch = useDispatch();                                                 //declaro la const dispatch para despachar mis acciones, con el hook useDispatch
+    const allMovies = useSelector ((state) => state.movies);  
+
+    const data = allMovies.map(el => el.map(el=> el.original_language))
+console.log(allMovies)
+console.log(data)
+var result = [];
+
+ data.forEach((item)=>{
+  //pushes only unique element
+
+    if(!result.includes(item)){
+    result.push(item);
+  }
+})
+console.log(result);
 
  
   useEffect(() => {
