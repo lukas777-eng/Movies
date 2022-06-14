@@ -14,6 +14,10 @@ import { MenuItem, Select } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
+import PropTypes from 'prop-types';
+import NoSsr from '@mui/material/NoSsr';
+
+
 
 
 
@@ -22,7 +26,7 @@ const Home = () => {
   const dispatch = useDispatch();                                                 //declaro la const dispatch para despachar mis acciones, con el hook useDispatch
   const allMovies = useSelector ((state) => state.movies);  
   const allFilters = useSelector ((state) => state.filterSelect);     
-  
+  console.log(allMovies.map(el=> el))
   const [Loading, setLoading] = useState(false)
     
 
@@ -70,6 +74,18 @@ const theme = createTheme({
     },
   },
 });
+
+const StyledAvatar = styled(TableCell)`
+  ${({ theme }) => `
+  cursor: pointer;
+  transition: ${theme.transitions.create(['background-color', 'transform'], {
+    duration: theme.transitions.duration.standard,
+  })};
+  &:hover {
+    transform: scale(1.3);
+  }
+  `}
+`;
 
   return (
     <>
@@ -122,7 +138,13 @@ const theme = createTheme({
            {allMovies.map((el, id) => (
             <>
                <TableRow key={el.id}>
-                 <TableCell><img src={ `https://image.tmdb.org/t/p/w500${el.poster_path}`} className="img" alt='Poster Not found' /></TableCell>
+                <NoSsr>
+                 <TableCell>
+                 <StyledAvatar>
+                  <img src={ `https://image.tmdb.org/t/p/w500${el.poster_path}`} className="img" alt='Poster Not found' />
+                  </StyledAvatar>
+                  </TableCell>
+                </NoSsr>
                  <TableCell><Typography>{el.title}</Typography></TableCell>
                  <TableCell><Typography>{el.release_date}</Typography></TableCell>
                  <TableCell><Typography>{el.vote_average}</Typography></TableCell>
@@ -138,5 +160,21 @@ const theme = createTheme({
     </>
   )
 }
+
+Home.propTypes = {
+  allMovies: PropTypes.arrayOf(
+    PropTypes.shape({
+      title: PropTypes.string.isRequired,
+      overview: PropTypes.string.isRequired,
+      vote_average: PropTypes.number.isRequired,
+      release_date: PropTypes.string.isRequired,
+    }),
+  ),
+  allLanguages: PropTypes.arrayOf(
+    PropTypes.shape({
+      original_language: PropTypes.string.isRequired,
+    }),
+  ), 
+};
 
 export default Home
