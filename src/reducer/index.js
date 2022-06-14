@@ -2,7 +2,7 @@
 
   const initialState = {
     movies : [],
-    fil2 : [],
+    filterSelect : [],
     fil : [],
 }
 
@@ -13,30 +13,30 @@ function rootReducer(state = initialState, action){
         case 'GET_MOVIES':
             return{
                 ...state,
-                movies: action.payload.a.shift(),
-                fil2: action.payload.b.shift(),    
+                movies: action.payload.movie.shift(),
+                filterSelect: action.payload.filter.shift(),    
             }
         
         case 'FILTER_LANGUAGE':
-          let allMovies = state.movies;
-          let allFil2 = state.fil2
+          
+          let allFil = state.filterSelect
 
-          const personasMap = allFil2.map(item=>{
+          const filterMap = allFil.map(item=>{
             return [item.original_language ,item]
           });
           
-          let a = personasMap.map(item=>{
+          let filterAction = filterMap.map(item=>{
             return [  item[0] === action.payload,  item]
           });
-          const b = a.filter(el=> el[0] === true)
-          const c = b.map(el=>el.reverse().shift().reverse().shift())
+          const filterTrueFalse = filterAction.filter(el=> el[0] === true)
+          const filterEnd = filterTrueFalse.map(el=>el.reverse().shift().reverse().shift())
 
-          let temperamentsFiltered = action.payload === "all"  ? allMovies: c
+          let allFiltered = action.payload === "all"  ? allFil: filterEnd
           
             return {
                  ...state,
-                  movies: temperamentsFiltered,
-                  fil: c,
+                  movies: allFiltered,
+                  fil: filterEnd,
                };
             
             default:

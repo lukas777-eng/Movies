@@ -19,8 +19,8 @@ export function GetMovies(){
                          dispatch(   {
                                     type: 'GET_MOVIES', 
                                     payload:  {
-                                        a: [res.data.results.concat(res1.data.results).concat(res2.data.results).concat(res3.data.results).concat(res4.data.results)],
-                                        b: [res.data.results.concat(res1.data.results).concat(res2.data.results).concat(res3.data.results).concat(res4.data.results)]
+                                        movie: [res.data.results.concat(res1.data.results).concat(res2.data.results).concat(res3.data.results).concat(res4.data.results)],
+                                        filter: [res.data.results.concat(res1.data.results).concat(res2.data.results).concat(res3.data.results).concat(res4.data.results)]
                                     }
                                 })
                    }))

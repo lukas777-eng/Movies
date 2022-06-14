@@ -1,83 +1,140 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { GetMovies, FilterByLanguage } from '../actions';
 
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
+import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import './Home.css'
+import { MenuItem, Select } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import Typography from '@mui/material/Typography';
+
+
 
 
 const Home = () => {
   const dispatch = useDispatch();                                                 //declaro la const dispatch para despachar mis acciones, con el hook useDispatch
   const allMovies = useSelector ((state) => state.movies);  
-  const allFil = useSelector ((state) => state.fil);      
-  const allFil2 = useSelector ((state) => state.fil2);          
+  const allFilters = useSelector ((state) => state.filterSelect);     
+  
+  const [Loading, setLoading] = useState(false)
     
 
-let personasMap1 =  allMovies.length === 100? allMovies.map(item=>{
+let mapSelect =  allMovies.length === 100? allMovies.map(item=>{
   return [item.original_language ,item]
-}) : allFil2.map(item=>{
+}) : allFilters.map(item=>{
   return [item.original_language ,item]
 });
 
-var personasMapArr1 = new Map(personasMap1); // Pares de clave y valor
+var mapSelectFiltered = new Map(mapSelect); // Pares de clave y valor
 
-let unicos1 = [...personasMapArr1.values()]; // Conversión a un array
+let allLanguages = [...mapSelectFiltered.values()]; // Conversión a un array
 
   useEffect(() => {
-    dispatch(GetMovies())  
+  setLoading(true)
+       dispatch(GetMovies()) 
+   setLoading(false)
+
   }, [dispatch])
 
 
  function Filter(e) {
-   dispatch(FilterByLanguage(e.target.value));
+  console.log(e.target.value)
+      dispatch(FilterByLanguage(e.target.value))
  }
 
+ ///styles table
+
+ const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: theme.palette.common.black,
+    color: theme.palette.common.white,
+  },
+  [`&.${tableCellClasses.body}`]: {
+
+    fontSize: 20,
+  },
+}));
+
+
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#005AEB',
+    },
+  },
+});
 
   return (
     <>
+    { Loading === true? <div className="lds-hourglass"></div> :
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
        <TableHead>
-          <TableRow>
-            <TableCell>Poster</TableCell>
-            <TableCell>Name</TableCell>
-            <TableCell>Release Date</TableCell>
-            <TableCell>Ranking</TableCell>
-            <TableCell>               
-                  <select  onChange={(e) => Filter(e)}>
-                    <option value="all">Languages</option>
+          <TableRow >
+            <StyledTableCell><Typography>Poster</Typography></StyledTableCell>
+            <StyledTableCell><Typography>Movie Title</Typography></StyledTableCell>
+            <StyledTableCell><Typography>Release Date</Typography></StyledTableCell>
+            <StyledTableCell><Typography>Ranking</Typography></StyledTableCell>
+            <ThemeProvider theme={theme} >
+
+            <StyledTableCell> 
+
+        <Select
+          sx={{ backgroundColor:'white' }}
+          theme={theme}
+          value="a"
+          label="Languages" 
+          onChange={(e) => Filter(e)}
+        >
+            <MenuItem value="a">
+            <em>Languages</em>
+          </MenuItem>
+          <MenuItem value="all">
+            <em>Reload</em>
+          </MenuItem>
+          {allLanguages.map((elem) => (
+          <MenuItem value={elem.original_language} key={elem.id}>{elem.original_language}</MenuItem>
+          ))}
+        </Select>   
+           
+                  {/* <select  onChange={(e) => Filter(e)}>
                     <>
-                    {unicos1.map((elem) => (
-                    <option value={elem.original_language}>{elem.original_language}</option>
+                    <option value="all">Languages</option>
+                    {allLanguages.map((elem) => (
+                    <option value={elem.original_language} key={elem.id}>{elem.original_language}</option>
                     ))}
                     </>
-                </select>
-                </TableCell>
-            <TableCell align="right">Description</TableCell>
+                </select> */}
+                </StyledTableCell>
+                </ThemeProvider>
+
+            <StyledTableCell align="right"><Typography>Review</Typography></StyledTableCell>
           </TableRow>
         </TableHead>
           <TableBody>
-          {allMovies?.map((el, id) => (
+           {allMovies.map((el, id) => (
             <>
-               <TableRow >
-                 <TableCell><img src={ `https://image.tmdb.org/t/p/w500${el.poster_path}`} className="img" /></TableCell>
-                 <TableCell>{el.title}</TableCell><TableCell>{el.release_date}</TableCell>
-                 <TableCell>{el.vote_average}</TableCell>
-                 <TableCell>{el.original_language}</TableCell>
-                 {/* <TableCell align="right">{el.overview.substring(0, 100)}...</TableCell> */}
+               <TableRow key={el.id}>
+                 <TableCell><img src={ `https://image.tmdb.org/t/p/w500${el.poster_path}`} className="img" alt='Poster Not found' /></TableCell>
+                 <TableCell><Typography>{el.title}</Typography></TableCell>
+                 <TableCell><Typography>{el.release_date}</Typography></TableCell>
+                 <TableCell><Typography>{el.vote_average}</Typography></TableCell>
+                 <TableCell><Typography>{el.original_language}</Typography></TableCell>
+                 <TableCell align="right"><Typography>{el.overview.substring(0, 100)}...</Typography></TableCell>
                </TableRow>
              </>
           ))}
         </TableBody>
         </Table>
     </TableContainer> 
-
+}
     </>
   )
 }
